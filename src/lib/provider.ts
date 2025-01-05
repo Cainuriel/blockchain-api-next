@@ -61,7 +61,7 @@ class Web3Provider {
         return [ name, symbol, balance];
 	}
 
-	async recoverSigner(hash: string, signature: string){
+	async recoverSigner(hash: string, signature: string): Promise<string> {
 	
 		return ethers.recoverAddress(hash, signature)
 	}
