@@ -7,28 +7,13 @@ import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 import { Alert, AlertDescription } from "@/components/ui/alert"
 import { Loader2 } from 'lucide-react'
-import { provider } from '../lib/provider'
-
-// ABI simplificado para ejemplo
-const TOKEN_ABI = [
-  "function name() view returns (string)",
-  "function symbol() view returns (string)",
-  "function balanceOf(address) view returns (uint)",
-
-]
+import { web3Provider } from '../lib/provider'
 
 interface TOKENINFO {
 
   tokenBalance?: string
   tokenName?: string
   tokenSymbol?: string
-
-}
-
-const CONTRACT_ADDRESSES = {
-    polfex: '0x3ebb53EAe7c499362055eaA65E6456193d0921Db',
-    usdt: '0x337610d27c682E347C9cD60BD4b3b107C9d34dDd',
-    usdc: '0x64544969ed7EBf5f083679233325356EbE738930',
 
 }
 
@@ -52,37 +37,30 @@ export default function BlockchainViewer() {
       setError('')
 
       // Obtener saldo nativo (BNB)
-      const balance = await provider.getBalance(address)
-      setFormattedBalanceBNB(ethers.formatEther(balance));
+      const balance = await web3Provider.balanceNativeToken(address)
+      setFormattedBalanceBNB(balance);
 
       let tokenData = {}
       let tokenData2 = {}
       let tokenData3 = {}
 
-        const pfxContract = new ethers.Contract(CONTRACT_ADDRESSES.polfex, TOKEN_ABI, provider)
-        const usdtContract = new ethers.Contract(CONTRACT_ADDRESSES.usdt, TOKEN_ABI, provider)
-        const usdcContract = new ethers.Contract(CONTRACT_ADDRESSES.usdc, TOKEN_ABI, provider)
+        // const usdcContract = new ethers.Contract(CONTRACT_ADDRESSES.usdc, TOKEN_ABI, provider)
         
-        const [name, symbol, tokenBalance] = await Promise.all([
-            pfxContract.name(),
-            pfxContract.symbol(),
-            pfxContract.balanceOf(address)
-        ])
-        const [name2, symbol2, tokenBalance2] = await Promise.all([
-            usdtContract.name(),
-            usdtContract.symbol(),
-            usdtContract.balanceOf(address)
-        ])
-        const [name3, symbol3, tokenBalance3] = await Promise.all([
-            usdcContract.name(),
-            usdcContract.symbol(),
-            usdcContract.balanceOf(address)
-        ])
+        const [ name, symbol, tokenBalance ] = await web3Provider.pfxToken(address);
+        const [name2, symbol2, tokenBalance2 ]= await web3Provider.usdtoken(address);
+        const [ name3, symbol3, tokenBalance3 ] = await web3Provider.usdcToken(address);
+
+       
+        // const [name3, symbol3, tokenBalance3] = await Promise.all([
+        //     usdcContract.name(),
+        //     usdcContract.symbol(),
+        //     usdcContract.balanceOf(address)
+        // ])
 
         tokenData = {
           tokenName: name,
           tokenSymbol: symbol,
-          tokenBalance: ethers.formatUnits(tokenBalance, 'gwei')
+          tokenBalance: ethers.formatUnits(tokenBalance , 'gwei')
         }
         tokenData2 = {
           tokenName: name2,
@@ -92,7 +70,7 @@ export default function BlockchainViewer() {
         tokenData3 = {
           tokenName: name3,
           tokenSymbol: symbol3,
-          tokenBalance: ethers.formatEther(tokenBalance3)
+          tokenBalance: ethers.formatEther(tokenBalance3 )
         }
       
 
