@@ -1,5 +1,6 @@
 import { ethers } from 'ethers'
 import currentConfig from './config/currentConfig.json'
+
 // Initialize provider outside component
 // export const provider = new ethers.JsonRpcProvider('https://data-seed-prebsc-1-s1.binance.org:8545/')
 const TOKEN_ABI = [
@@ -10,15 +11,11 @@ const TOKEN_ABI = [
   ]
 class Web3Provider {
 	private provider: ethers.JsonRpcProvider;
-    private contractPFX: string;
-    private contractUSDT: string;
-    private contractUSDC: string;
+
 
 	constructor() {
 		this.provider = new ethers.JsonRpcProvider(currentConfig.nodeUrl);
-        this.contractPFX = currentConfig.polfexContract;
-        this.contractUSDT = currentConfig.usdtContract;
-        this.contractUSDC = currentConfig.usdcContract;
+
 	}
 
 	async balanceNativeToken(address: string): Promise<string> {
@@ -26,41 +23,30 @@ class Web3Provider {
 		return ethers.formatEther(balance)
 	}
 
+      /**
+     * Retrieves the name, symbol, and balance of a specified token for a given address.
+     * @param address - The address to query the token balance for.
+     * @param contractToken - The contract address of the token. Defaults to the PFX token contract address.
+     * @returns A promise that resolves to a tuple containing the token name, symbol, and balance.
+     */
+    async token(address: string, contractToken: string = currentConfig.polfexContract): Promise<[string, string, ethers.BigNumberish]> {
+        // console.log(`address, contractToken, `, address, contractToken, );
+        const contract = new ethers.Contract(contractToken, TOKEN_ABI, this.provider);
+        const name = await contract.name();
+        const symbol = await contract.symbol();
+        const balance = await contract.balanceOf(address);
+        // console.log(`name, symbol, balance`, name, symbol, balance);
+        return [name, symbol, balance];
+    }
 
-    async pfxToken(address: string): Promise< [string, string, ethers.BigNumberish] > {
 
-		const pfxContract =  new ethers.Contract(this.contractPFX, TOKEN_ABI, this.provider);
-        const name = await pfxContract.name();
-
-        const symbol = await pfxContract.symbol();
-
-        const balance = await pfxContract.balanceOf(address);
-
-        return [ name, symbol, balance];
-	}
-
-    async usdtoken(address: string): Promise<[string, string, ethers.BigNumberish] > {
-
-		const pfxContract =  new ethers.Contract(this.contractUSDT, TOKEN_ABI, this.provider);
-        const name = await pfxContract.name();
-        const symbol = await pfxContract.symbol();
-
-        const balance = await pfxContract.balanceOf(address);
-        return [ name, symbol, balance];
-	}
-
-    async usdcToken(address: string): Promise<[string, string, ethers.BigNumberish] > {
-
-		const pfxContract =  new ethers.Contract(this.contractUSDC, TOKEN_ABI, this.provider);
-        const name = await pfxContract.name();
-
-        const symbol = await pfxContract.symbol();
- 
-        const balance = await pfxContract.balanceOf(address);
-    
-        return [ name, symbol, balance];
-	}
-
+   
+    /**
+     * Retrieves the address of a specified signature for a given hash.
+     * @param hash - The signed hash.
+     * @param signature - The signature that will be used to recover the signer against the transmitted hash.
+     * @returns The signer address.
+     */
 	async recoverSigner(hash: string, signature: string): Promise<string> {
 	
 		return ethers.recoverAddress(hash, signature)

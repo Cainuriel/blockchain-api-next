@@ -8,10 +8,10 @@ import { Button } from "@/components/ui/button"
 import { Alert, AlertDescription } from "@/components/ui/alert"
 import { Loader2 } from 'lucide-react'
 import { web3Provider } from '../lib/provider'
-
+import currentConfig from '../lib/config/currentConfig.json'
 interface TOKENINFO {
 
-  tokenBalance?: string
+  tokenBalance?: number
   tokenName?: string
   tokenSymbol?: string
 
@@ -20,9 +20,9 @@ interface TOKENINFO {
 export default function BlockchainViewer() {
   const [address, setAddress] = useState('')
 //   const [tokenAddress, setTokenAddress] = useState('')
-  const [data, setData] = useState<TOKENINFO | null>(null)
-  const [data2, setData2] = useState<TOKENINFO | null>(null)
-  const [data3, setData3] = useState<TOKENINFO | null>(null)
+  const [data, setData] = useState<TOKENINFO | null>(null) // pfxx
+  const [data2, setData2] = useState<TOKENINFO | null>(null) // usdt
+  const [data3, setData3] = useState<TOKENINFO | null>(null) // usdc
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
   const [formattedBalanceBNB, setFormattedBalanceBNB] = useState('')
@@ -46,9 +46,9 @@ export default function BlockchainViewer() {
 
         // const usdcContract = new ethers.Contract(CONTRACT_ADDRESSES.usdc, TOKEN_ABI, provider)
         
-        const [ name, symbol, tokenBalance ] = await web3Provider.pfxToken(address);
-        const [name2, symbol2, tokenBalance2 ]= await web3Provider.usdtoken(address);
-        const [ name3, symbol3, tokenBalance3 ] = await web3Provider.usdcToken(address);
+        const [ name, symbol, tokenBalance ] = await web3Provider.token(address);
+        const [name2, symbol2, tokenBalance2 ]= await web3Provider.token(address, currentConfig.usdtContract);
+        const [ name3, symbol3, tokenBalance3 ] = await web3Provider.token(address, currentConfig.usdcContract);
 
        
         // const [name3, symbol3, tokenBalance3] = await Promise.all([
@@ -60,17 +60,17 @@ export default function BlockchainViewer() {
         tokenData = {
           tokenName: name,
           tokenSymbol: symbol,
-          tokenBalance: ethers.formatUnits(tokenBalance , 'gwei')
+          tokenBalance: parseFloat(ethers.formatUnits(tokenBalance, 'gwei')).toFixed(3)
         }
         tokenData2 = {
           tokenName: name2,
           tokenSymbol: symbol2,
-          tokenBalance: ethers.formatEther(tokenBalance2)
+          tokenBalance: parseFloat(ethers.formatEther(tokenBalance2)).toFixed(2)
         }
         tokenData3 = {
           tokenName: name3,
           tokenSymbol: symbol3,
-          tokenBalance: ethers.formatEther(tokenBalance3 )
+          tokenBalance: parseFloat(ethers.formatEther(tokenBalance3 )).toFixed(2)
         }
       
 
