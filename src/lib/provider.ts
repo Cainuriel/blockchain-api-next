@@ -9,6 +9,14 @@ const TOKEN_ABI = [
     "function balanceOf(address) view returns (uint)",
   
   ]
+
+  const NFT_ABI = [
+    "function name() view returns (string)",
+    "function priceContainer() view returns (uint)",
+    "function priceCierre() view returns (uint)",
+    "function balanceOf(address) view returns (uint)",
+  
+  ]
 class Web3Provider {
 	private provider: ethers.JsonRpcProvider;
 
@@ -38,6 +46,23 @@ class Web3Provider {
         // console.log(`name, symbol, balance`, name, symbol, balance);
         return [name, symbol, balance];
     }
+
+         /**
+     * Retrieves the name, price, and balance of polfex nfts collections.
+     * @param address - The address to query the nft balance for.
+     * @returns A promise that resolves to a tuple containing the token name, price, and balance of both nfts collections.
+     */
+       async nft(address: string): Promise<[string, ethers.BigNumberish, string, ethers.BigNumberish]> {
+        
+            const containerContract = new ethers.Contract(currentConfig.containerNFTContract, NFT_ABI, this.provider);
+            const nameContainer = await containerContract.name();
+            const balanceContainer = await containerContract.balanceOf(address);
+            const sealContract = new ethers.Contract(currentConfig.sealNFTContract, NFT_ABI, this.provider);
+            const nameSeal = await sealContract.name();
+            const balanceSeal = await sealContract.balanceOf(address);
+            console.log(`nameContainer, balanceContainer, nameSeal, balanceSeal`, nameContainer, balanceContainer, nameSeal, balanceSeal);
+            return [nameContainer, balanceContainer, nameSeal, balanceSeal];
+        }
 
 
    
