@@ -7,7 +7,7 @@ import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 import { Alert, AlertDescription } from "@/components/ui/alert"
 import { Loader2 } from 'lucide-react'
-
+import { web3Provider } from '../lib/provider'
 
 
 export default function BlockchainViewer() {
@@ -29,7 +29,7 @@ export default function BlockchainViewer() {
     try {
       setLoading(true);
       setError('');
-      setResult( ethers.recoverAddress(hash, signature));
+      setResult( await web3Provider.recoverSigner(hash, signature));
     } catch (err) {
       if (err instanceof Error) {
         setError(`Error: ${err.message}`)
