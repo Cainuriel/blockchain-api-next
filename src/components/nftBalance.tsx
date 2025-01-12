@@ -16,6 +16,8 @@ interface NFTINFO {
   sealBalance?: number
   containerName?: string
   sealName?: string
+  priceContainer?: number
+  priceSeal?: number
 
 }
 
@@ -42,7 +44,7 @@ export default function BlockchainViewer() {
 
         // const usdcContract = new ethers.Contract(CONTRACT_ADDRESSES.usdc, TOKEN_ABI, provider)
         
-        const [ nameContainer, balanceContainer, nameSeal, balanceSeal] = await web3Provider.nft(address);
+        const [ nameContainer, balanceContainer, priceContainer, nameSeal, balanceSeal, priceSeal] = await web3Provider.nft(address);
 
        
 
@@ -50,7 +52,9 @@ export default function BlockchainViewer() {
             containerName: nameContainer,
             sealName: nameSeal,
             containerBalance: balanceContainer,
-            sealBalance: balanceSeal
+            sealBalance: balanceSeal,
+            priceContainer:  parseFloat(ethers.formatUnits(priceContainer)).toFixed(3),
+            priceSeal:  parseFloat(ethers.formatUnits(priceSeal)).toFixed(3)
         }
 
 
@@ -117,9 +121,11 @@ export default function BlockchainViewer() {
             {data.containerName && (
               <>
                 <p className="font-medium">Nombre: {data.containerName}</p>
-                <p className="font-medium">Saldo NFTs: {data.containerBalance}</p>
+                <p className="font-medium">Precio en BNBs: {data.priceContainer}</p>
+                <p className="font-medium">Saldo Usuario: {data.containerBalance}</p>
                 <p className="font-medium">Nombre: {data.sealName}</p>
-                <p className="font-medium">Saldo NFTs: {data.sealBalance}</p>
+                <p className="font-medium">Saldo Usuario: {data.sealBalance}</p>
+                <p className="font-medium">Precio en BNBs: {data.priceSeal}</p>
               </>
             )}
           </div>

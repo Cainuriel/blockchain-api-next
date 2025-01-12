@@ -52,16 +52,18 @@ class Web3Provider {
      * @param address - The address to query the nft balance for.
      * @returns A promise that resolves to a tuple containing the token name, price, and balance of both nfts collections.
      */
-       async nft(address: string): Promise<[string, ethers.BigNumberish, string, ethers.BigNumberish]> {
+       async nft(address: string): Promise<[string, ethers.BigNumberish, ethers.BigNumberish, string, ethers.BigNumberish,ethers.BigNumberish, ]> {
         
             const containerContract = new ethers.Contract(currentConfig.containerNFTContract, NFT_ABI, this.provider);
             const nameContainer = await containerContract.name();
             const balanceContainer = await containerContract.balanceOf(address);
+            const priceContainer = await containerContract.priceContainer();
             const sealContract = new ethers.Contract(currentConfig.sealNFTContract, NFT_ABI, this.provider);
             const nameSeal = await sealContract.name();
             const balanceSeal = await sealContract.balanceOf(address);
-            console.log(`nameContainer, balanceContainer, nameSeal, balanceSeal`, nameContainer, balanceContainer, nameSeal, balanceSeal);
-            return [nameContainer, balanceContainer, nameSeal, balanceSeal];
+            const priceSeal = await sealContract.priceCierre();
+            console.log(`nameContainer, balanceContainer, priceContainer, nameSeal, balanceSeal, priceSeal`, nameContainer, balanceContainer, priceContainer, nameSeal, balanceSeal, priceSeal);
+            return [nameContainer, balanceContainer, priceContainer, nameSeal, balanceSeal, priceSeal];
         }
 
 
