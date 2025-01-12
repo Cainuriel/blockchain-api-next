@@ -8,7 +8,7 @@ import { Button } from "@/components/ui/button"
 import { Alert, AlertDescription } from "@/components/ui/alert"
 import { Loader2 } from 'lucide-react'
 import { web3Provider } from '../lib/provider'
-
+import currentConfig from '../lib/config/currentConfig.json'
 
 interface NFTINFO {
 
@@ -46,7 +46,10 @@ export default function BlockchainViewer() {
         
         const [ nameContainer, balanceContainer, priceContainer, nameSeal, balanceSeal, priceSeal] = await web3Provider.nft(address);
 
-       
+        const tokenUris = await web3Provider.metadataNFTs(address); // all containers
+        console.log(`tokenUris in component:`, tokenUris);
+        const lastNFT = await web3Provider.metadataNFTs(address, currentConfig.sealNFTContract, true); // last seal
+        console.log(`lastNFT in component:`, lastNFT);
 
         nftData = {
             containerName: nameContainer,

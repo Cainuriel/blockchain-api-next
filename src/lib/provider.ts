@@ -15,6 +15,8 @@ const TOKEN_ABI = [
     "function priceContainer() view returns (uint)",
     "function priceCierre() view returns (uint)",
     "function balanceOf(address) view returns (uint)",
+    "function tokenURI(uint) view returns (string)",
+    "function getNFTsOfOwner(address) view returns (uint[])",
   
   ]
 class Web3Provider {
@@ -65,6 +67,30 @@ class Web3Provider {
             console.log(`nameContainer, balanceContainer, priceContainer, nameSeal, balanceSeal, priceSeal`, nameContainer, balanceContainer, priceContainer, nameSeal, balanceSeal, priceSeal);
             return [nameContainer, balanceContainer, priceContainer, nameSeal, balanceSeal, priceSeal];
         }
+
+            /**
+     * Returns all metadatas of an user by NFT contract or the last purchased NFT metadata
+     * @param address - The address to query the NFTs token URIs
+     * @param contractNFT - The contract address of the NFT with a default value: container NFT contract.
+     * @param lastNFT - Flag that determines if we only want the last purchased NFT
+     * @returns An array with all the tokenURIs of the user's NFTs or the last tokenURI
+     */
+       async metadataNFTs(address: string, contractNFT: string = currentConfig.containerNFTContract, lastNFT:boolean = false): Promise<[ ]> {
+        
+        const contract = new ethers.Contract(contractNFT, NFT_ABI, this.provider);
+        if(lastNFT){
+            const nfts = await contract.getNFTsOfOwner(address);
+            const tokenURI = await contract.tokenURI(nfts[nfts.length - 1]);
+            console.log(`last nft: `, tokenURI);
+            return [];
+        } else {
+            const nfts = await contract.getNFTsOfOwner(address);
+            const tokenURIs = await Promise.all(nfts.map(async (nft:number) => await contract.tokenURI(nft)));
+            console.log(`tokenURIs:`, tokenURIs);
+            return [];
+        }
+
+    }
 
 
    
