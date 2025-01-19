@@ -9,6 +9,7 @@ import { Alert, AlertDescription } from "@/components/ui/alert"
 import { Loader2 } from 'lucide-react'
 import { web3Provider } from '../lib/provider'
 import currentConfig from '../lib/config/currentConfig.json'
+// import RenderNFTs from './renderNFTs'
 
 interface NFTINFO {
 
@@ -26,6 +27,7 @@ export default function BlockchainViewer() {
   const [data, setData] = useState<NFTINFO | null>(null) 
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
+  // const [metadata, setMetadata] = useState<string[]>([])
 
   const fetchBlockchainData = async () => {
     if (!ethers.isAddress(address)) {
@@ -50,6 +52,10 @@ export default function BlockchainViewer() {
         console.log(`tokenUris in component:`, tokenUris);
         const lastNFT = await web3Provider.metadataNFTs(address, currentConfig.sealNFTContract, true); // last seal
         console.log(`lastNFT in component:`, lastNFT);
+
+        // if (tokenUris.length > 0) {
+        //   setMetadata(tokenUris);
+        // }
 
         nftData = {
             containerName: nameContainer,
@@ -131,12 +137,22 @@ export default function BlockchainViewer() {
                 <p className="font-medium">Precio en BNBs: {data.priceSeal}</p>
               </>
             )}
+            
           </div>
+          
         )}
      
         
       </CardContent>
+
+      {/* {metadata.length > 0 && (
+
+      <RenderNFTs tokensUris={metadata} />
+
+      )} */}
+
     </Card>
+    
   )
 }
 

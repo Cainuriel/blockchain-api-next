@@ -78,16 +78,18 @@ class Web3Provider {
        async metadataNFTs(address: string, contractNFT: string = currentConfig.containerNFTContract, lastNFT:boolean = false): Promise<[ ]> {
         
         const contract = new ethers.Contract(contractNFT, NFT_ABI, this.provider);
+        const nfts = await contract.getNFTsOfOwner(address);
+        if(nfts.length === 0) return [];
         if(lastNFT){
-            const nfts = await contract.getNFTsOfOwner(address);
+            
             const tokenURI = await contract.tokenURI(nfts[nfts.length - 1]);
             console.log(`last nft: `, tokenURI);
-            return [];
+            return tokenURI as [];
         } else {
-            const nfts = await contract.getNFTsOfOwner(address);
+      
             const tokenURIs = await Promise.all(nfts.map(async (nft:number) => await contract.tokenURI(nft)));
             console.log(`tokenURIs:`, tokenURIs);
-            return [];
+            return tokenURIs as [];
         }
 
     }
