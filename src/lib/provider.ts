@@ -19,18 +19,26 @@ const TOKEN_ABI = [
     "function getNFTsOfOwner(address) view returns (uint[])",
   
   ]
+
+  const BUYPFX_ABI = [
+
+    "function getTokenBalance() view returns (uint)",
+    "function rate() view returns (uint)",
+  
+  ]
 class Web3Provider {
 	private provider: ethers.JsonRpcProvider;
-
+  private buyPFXContract: string
 
 	constructor() {
 		this.provider = new ethers.JsonRpcProvider(currentConfig.nodeUrl);
+    this.buyPFXContract = currentConfig.buyPFXContract;
 
 	}
 
 	async balanceNativeToken(address: string): Promise<string> {
 		const balance = await this.provider.getBalance(address);
-		return ethers.formatEther(balance)
+		return parseFloat(ethers.formatEther(balance)).toFixed(2);
 	}
 
       /**
@@ -39,14 +47,17 @@ class Web3Provider {
      * @param contractToken - The contract address of the token. Defaults to the PFX token contract address.
      * @returns A promise that resolves to a tuple containing the token name, symbol, and balance.
      */
-    async token(address: string, contractToken: string = currentConfig.polfexContract): Promise<[string, string, ethers.BigNumberish]> {
+    async token(address: string, contractToken: string = currentConfig.polfexContract): Promise<[string, string, string]> {
         // console.log(`address, contractToken, `, address, contractToken, );
         const contract = new ethers.Contract(contractToken, TOKEN_ABI, this.provider);
         const name = await contract.name();
         const symbol = await contract.symbol();
         const balance = await contract.balanceOf(address);
         // console.log(`name, symbol, balance`, name, symbol, balance);
-        return [name, symbol, balance];
+        if (contractToken === currentConfig.polfexContract) {
+            return [name, symbol, parseFloat(ethers.formatUnits(balance, 'gwei')).toFixed(3)];
+        }
+        return [name, symbol, parseFloat(ethers.formatEther(balance)).toFixed(2)];
     }
 
          /**
@@ -94,8 +105,6 @@ class Web3Provider {
 
     }
 
-
-   
     /**
      * Retrieves the address of a specified signature for a given hash.
      * @param hash - The signed hash.
@@ -106,6 +115,19 @@ class Web3Provider {
 	
 		return ethers.recoverAddress(hash, signature)
 	}
+
+        /**
+           * Retrieves the rate and balance of the sender's Polfex contract.
+           * @returns A promise that resolves to a tuple containing the rate and balance of PFX in the contract. The rate is the number of tokens per unit of stablecoin.
+           */
+        async buyPFX(): Promise<[ethers.BigNumberish, string]> {
+
+          const contract = new ethers.Contract(this.buyPFXContract, BUYPFX_ABI, this.provider);
+          const rate = await contract.rate();
+          const balance = await contract.getTokenBalance();
+          // console.log(`rate, balance`,rate, balance);
+          return [rate, parseFloat(ethers.formatUnits(balance, 'gwei')).toFixed(3)];
+      }
 }
 
 // Usage example:

@@ -60,17 +60,17 @@ export default function BlockchainViewer() {
         tokenData = {
           tokenName: name,
           tokenSymbol: symbol,
-          tokenBalance: parseFloat(ethers.formatUnits(tokenBalance, 'gwei')).toFixed(3)
+          tokenBalance: tokenBalance
         }
         tokenData2 = {
           tokenName: name2,
           tokenSymbol: symbol2,
-          tokenBalance: parseFloat(ethers.formatEther(tokenBalance2)).toFixed(2)
+          tokenBalance: tokenBalance2
         }
         tokenData3 = {
           tokenName: name3,
           tokenSymbol: symbol3,
-          tokenBalance: parseFloat(ethers.formatEther(tokenBalance3 )).toFixed(2)
+          tokenBalance: tokenBalance3
         }
       
 
