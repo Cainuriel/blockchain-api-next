@@ -1,5 +1,5 @@
 {
-"polfexContract": "0x3ebb53EAe7c499362055eaA65E6456193d0921Db",
+    "polfexContract": "0x3ebb53EAe7c499362055eaA65E6456193d0921Db",
 "usdtContract": "0x337610d27c682E347C9cD60BD4b3b107C9d34dDd",
  "usdcContract" : "0x64544969ed7EBf5f083679233325356EbE738930",
 "stakingOneYearContract": "0x84ba2C92B70F2F0E35549785a6Ef02808A718edA",
@@ -9,5 +9,9 @@
 "sealNFTContract": "0x41ca3875a62E786B74C4D571495FAe594daed1f8",
 "nodeUrl" : "https://data-seed-prebsc-1-s1.bnbchain.org:8545", 
 "wsUrl": "wss://bsc-testnet-rpc.publicnode.com",
-"scanUrl": "https://testnet.bscscan.com/"
+"scanUrl": "https://testnet.bscscan.com/",
+"timeToRechargeOneYear": 10,
+"timetoRechargeSixMonth": 5,
+"profitPercentageSixMonth": 0.06,
+"profitPercentageOneYear": 0.09
 }

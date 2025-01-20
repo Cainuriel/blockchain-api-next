@@ -36,7 +36,6 @@ export default function BlockchainViewer() {
       let dataFromBlockchain = {}
 
 
-        // const usdcContract = new ethers.Contract(CONTRACT_ADDRESSES.usdc, TOKEN_ABI, provider)
         
         const [ rate, balance] = await web3Provider.buyPFX();
         console.log(`rate, balance of pfx`, rate, balance);
@@ -73,7 +72,7 @@ export default function BlockchainViewer() {
   return (
     <Card className="w-full max-w-2xl mx-auto">
       <CardHeader>
-        <CardTitle>VENTA DE PFX</CardTitle>
+        <CardTitle>Venta de PFX</CardTitle>
       </CardHeader>
       <CardContent className="space-y-4">
 

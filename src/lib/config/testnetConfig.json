@@ -9,5 +9,9 @@
 "sealNFTContract": "0x41ca3875a62E786B74C4D571495FAe594daed1f8",
 "nodeUrl" : "https://data-seed-prebsc-1-s1.bnbchain.org:8545", 
 "wsUrl": "wss://bsc-testnet-rpc.publicnode.com",
-"scanUrl": "https://testnet.bscscan.com/"
+"scanUrl": "https://testnet.bscscan.com/",
+"timeToRechargeOneYear": 10,
+"timetoRechargeSixMonth": 5,
+"profitPercentageSixMonth": 6,
+"profitPercentageOneYear": 12
 }

@@ -44,9 +44,9 @@ export default function BlockchainViewer() {
       let tokenData2 = {}
       let tokenData3 = {}
 
-        // const usdcContract = new ethers.Contract(CONTRACT_ADDRESSES.usdc, TOKEN_ABI, provider)
+
         
-        const [ name, symbol, tokenBalance ] = await web3Provider.token(address);
+        const [ name, symbol, tokenBalance ] = await web3Provider.token(address); // por defecto pfx
         const [name2, symbol2, tokenBalance2 ]= await web3Provider.token(address, currentConfig.usdtContract);
         const [ name3, symbol3, tokenBalance3 ] = await web3Provider.token(address, currentConfig.usdcContract);
 

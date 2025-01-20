@@ -44,7 +44,7 @@ export default function BlockchainViewer() {
       let nftData = {}
 
 
-        // const usdcContract = new ethers.Contract(CONTRACT_ADDRESSES.usdc, TOKEN_ABI, provider)
+ 
         
         const [ nameContainer, balanceContainer, priceContainer, nameSeal, balanceSeal, priceSeal] = await web3Provider.nft(address);
 
@@ -98,15 +98,6 @@ export default function BlockchainViewer() {
             onChange={(e) => setAddress(e.target.value)}
           />
         </div>
-
-        {/* <div className="space-y-2">
-          <label className="text-sm font-medium">Dirección del Token (opcional)</label>
-          <Input
-            placeholder="0x..."
-            value={tokenAddress}
-            onChange={(e) => setTokenAddress(e.target.value)}
-          />
-        </div> */}
         
 
         <Button 

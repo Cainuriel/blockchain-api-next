@@ -1,8 +1,6 @@
 import { ethers } from 'ethers'
 import currentConfig from './config/currentConfig.json'
 
-// Initialize provider outside component
-// export const provider = new ethers.JsonRpcProvider('https://data-seed-prebsc-1-s1.binance.org:8545/')
 const TOKEN_ABI = [
     "function name() view returns (string)",
     "function symbol() view returns (string)",
@@ -20,12 +18,21 @@ const TOKEN_ABI = [
   
   ]
 
+  const STAKING_ABI = [
+
+    "function staked(address) view returns (uint)",
+    "function stakedFromTs(address) view returns (uint)",
+  
+  ]
+
+
   const BUYPFX_ABI = [
 
     "function getTokenBalance() view returns (uint)",
     "function rate() view returns (uint)",
   
   ]
+
 class Web3Provider {
 	private provider: ethers.JsonRpcProvider;
   private buyPFXContract: string
@@ -128,11 +135,47 @@ class Web3Provider {
           // console.log(`rate, balance`,rate, balance);
           return [rate, parseFloat(ethers.formatUnits(balance, 'gwei')).toFixed(3)];
       }
+
+             /**
+             * Retrieves the data from two differents contracts of staking.
+             * @param address - The address to query the balance for user situation.
+             * @param contractStaking - The contract address of the staking contract. Defaults the sixMonth contract.
+             * @returns A promise that resolves to a tuple containing the amount staked by user: stakedUser, it is blocked the unstaking a boolean time: isTimePending, it is possible recharge, the time: rechargeTime, and the pending time to unstaking: stakingTime.
+             */
+            async staking(address: string, contractStaking: string = currentConfig.sixMonthContract): Promise<[string, boolean, number,  number]> {
+            // tiempos para la recarga de los contratos de staking
+              const timeToRecharge = [
+              currentConfig.timetoRechargeSixMonth,
+              currentConfig.timeToRechargeOneYear
+            ]; // el tiempo pasará a dias en mainnet y serán mintuos en testnet
+
+            const stakingContract = new ethers.Contract(contractStaking, STAKING_ABI, this.provider);
+            let rechargeTime = 0
+            const stakedUser = await stakingContract.staked(address);
+            let stakingTime: number = 0;
+            let isTimePending = false;
+            
+
+            if (stakedUser > 0) {
+              const timeStamp:ethers.BigNumberish = await stakingContract.stakedFromTs(address);
+              const now = Date.now();
+              // Si el tiempo de recarga es de 5 minutos estamos en testnet. En caso contrario estamos en mainnet y la espera es en días.
+              if(currentConfig.timetoRechargeSixMonth === 5) {
+                stakingTime = Math.floor((Number(timeStamp) * 1000 - now) / 60000); // Convert BigNumber to number, then milliseconds to minutes
+              } else {
+                stakingTime = Math.floor((Number(timeStamp)  * 1000 - now) / (1000 * 60 * 60 * 24)); // Convert milliseconds to days
+              }
+           
+              isTimePending = stakingTime > 0 ? true : false;
+              rechargeTime = stakingTime - timeToRecharge[contractStaking === currentConfig.sixMonthContract ? 0 : 1];
+              
+            }
+           
+     
+            console.log(`stakedUser, isTimePending, rechargeTime, stakingTime`, stakedUser, isTimePending, rechargeTime, stakingTime);
+            return [parseFloat(ethers.formatUnits(stakedUser, 'gwei')).toFixed(3), isTimePending, rechargeTime, stakingTime];
+        }
 }
 
-// Usage example:
-// const web3Provider = new Web3Provider();
-// const balance = await web3Provider.balanceToken('0x...');
-// const contract = await web3Provider.firmaAcuerdos('0x...', GameABI.abi, signer);
 
 export const web3Provider = new Web3Provider();
